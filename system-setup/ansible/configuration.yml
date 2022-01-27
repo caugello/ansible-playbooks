@@ -1,0 +1,24 @@
+---
+- name: Configure system
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Get dotfiles
+      tags: 
+        - dotfiles
+      git:
+        repo: https://github.com/dot2xl/.dotfiles.git
+        dest: ~/.dotfiles
+
+    - name: Deploy dotfiles
+      tags:
+        - dotfiles
+      shell: pushd ~/.dotfiles && stow {{ item }}
+      with_items:
+          - tmux
+          - terminator
+          - mako
+          - nvim
+          - sway
+          - waybar
+          - rofi

@@ -1,0 +1,88 @@
+---
+- name: Configure repos
+  become: yes
+  block:
+    - shell: dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
+    - shell: dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
+    - dnf:
+        name: 
+          - fedora-workstation-repositories
+          - dnf-plugins-core
+        update_cache: true
+        state: present
+    - shell: dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/
+    - shell: rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+    - shell: dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+
+- name: Install core system
+  become: yes
+  tags:
+    - core
+  dnf:
+    name:
+      - sway
+      - swaylock
+      - swaybg
+      - waybar
+      - mako
+      - rofi
+      - pavucontrol
+      - alsa-utils
+      - zsh
+      - flatpak
+      - kmod-v4l2loopback
+      - v4l2loopback
+      - v4l-utils
+      - terminator
+      - ranger
+      - util-linux-user
+      - systemd
+      - slurp
+      - grim
+      - ripgrep
+      - NetworkManager
+      - NetworkManager-openvpn
+      - openvpn
+      - NetworkManager-tui
+      - fira-code-fonts
+      - fontconfig
+      - fontawesome-fonts
+      - fontawesome-fonts-web
+    state: present
+
+- name: Set zsh as shell
+  tags:
+    - core
+  shell: chsh -s /usr/bin/zsh
+
+- name: Create fonts directory
+  tags:
+    - core
+  file:
+    path: ~/.local/share/fonts
+    state: directory
+
+- name: Download FiraMono Nerd font
+  tags:
+    - core
+  get_url:
+    url: 'https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FiraMono/Medium/complete/Fira%20Mono%20Medium%20Nerd%20Font%20Complete%20Mono.otf'
+    dest: '~/.local/share/fonts/Fira Mono Medium Nerd Font Complete Mono.otf'
+
+- name: Install Fonts
+  tags:
+    - core
+  shell: fc-cache -v
+
+- name: Install browsers
+  become: yes
+  tags:
+    - core
+  dnf:
+    name:
+      - brave-browser
+      - google-chrome
+      - firefox
+    enablerepo:
+      - google-chrome
+    state: present

@@ -1,0 +1,12 @@
+---
+- name: Install utilities
+  become: yes
+  tags:
+    - utilities
+  dnf:
+    name:
+      - libreoffice
+      - gimp
+      - obs-studio
+      - flowblade
+      - gphoto2

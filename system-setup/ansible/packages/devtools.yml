@@ -1,0 +1,56 @@
+---
+- name: Install devtools
+  become: yes
+  tags:
+    - devtools
+  dnf:
+    name:
+      - git
+      - stow
+      - nodejs
+      - lua
+      - tmux
+      - origin-clients
+      - powerline
+      - powerline-fonts
+      - tmux-powerline
+      - '@Development tools'
+      - zlib-devel
+      - bzip2
+      - bzip2-devel
+      - readline-devel
+      - sqlite
+      - sqlite-devel
+      - openssl-devel
+      - xz
+      - xz-devel
+      - libffi-devel
+      - findutils
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - wl-clipboard
+    state: present
+
+- name: Enable docker
+  tags:
+    - devtools
+  systemd:
+    name: docker
+    enabled: yes
+
+- name: Install tmux plugin manager
+  tags:
+    - devtools
+  git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: ~/.tmux/plugins/tpm
+
+- name: Install pyenv
+  tags:
+    - pyenv
+    - devtools
+  git:
+    repo: https://github.com/pyenv/pyenv.git
+    dest: ~/.pyenv
+    update: yes

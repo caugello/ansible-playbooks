@@ -1,0 +1,8 @@
+---
+- name: Install packages
+  hosts: localhost
+  tasks:
+    - import_tasks: packages/core.yml
+    - import_tasks: packages/devtools.yml
+    - import_tasks: packages/neovim.yml
+    - import_tasks: packages/utilities.yml

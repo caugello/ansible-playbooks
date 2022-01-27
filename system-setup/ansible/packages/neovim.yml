@@ -1,0 +1,66 @@
+---
+- name: Get Neovim source
+  tags:
+    - neovim
+    - devtools
+  git:
+    repo: https://github.com/neovim/neovim 
+    dest: ~/Tools/neovim
+    version: master
+    update: yes
+
+- name: Install Neovim build pre-reqs
+  become: yes
+  tags:
+    - neovim
+    - devtools
+  dnf:
+    name:
+      - ninja-build 
+      - libtool
+      - autoconf
+      - automake
+      - cmake
+      - gcc
+      - gcc-c++
+      - make
+      - pkgconfig
+      - unzip
+      - patch
+      - gettext
+      - curl
+    state: present
+
+- name: Build Neovim
+  tags:
+    - neovim
+    - devtools
+  block:
+  - shell: "cd {{ lookup('env', 'HOME') }}/Tools/neovim && make clean"
+  - make:
+      chdir: ~/Tools/neovim
+      params:
+        CMAKE_BUILD_TYPE: RelWithDebInfo
+
+- name: Install neovim
+  become: true
+  tags:
+    - neovim
+    - devtools
+  shell: "cd {{ lookup('env', 'HOME') }}/Tools/neovim && make install"
+
+- name: Install Vim-Plug
+  tags:
+    - neovim
+  block:
+    - ansible.builtin.file:
+        path: ~/.config/nvim/autoload
+        state: directory
+    - get_url:
+        url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        dest: ~/.config/nvim/autoload/plug.vim
+
+- name: Install vim Plugins
+  tags:
+    - neovim
+  shell: nvim +PlugInstall +qall +silent

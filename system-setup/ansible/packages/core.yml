@@ -48,6 +48,7 @@
       - fontconfig
       - fontawesome-fonts
       - fontawesome-fonts-web
+      - lxpolkit
     state: present
 
 - name: Set zsh as shell
